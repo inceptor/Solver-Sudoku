@@ -24,11 +24,13 @@ def solve_Perso(sudoku):
 
     #Initialisation /step 1
     boolSudoku = [ [True] * 9 for i in range(9)]
+    allCase = [[] for i in range(9)] #Contains all well-know numbers. 1D = Number, 2D = list of this number
 
     for i in range(9):
         for j in range(9):
             if sudoku.area[i][j] != 0:
                 boolSudoku[i][j] = False
+                allCase[sudoku.area[i][j]-1].append(Case(sudoku.area[i][j],i,j))
 
     #the begin
     found = True
@@ -36,20 +38,20 @@ def solve_Perso(sudoku):
         found = False
         for n in range(1,10):
             boolSudokuTemp = copy.deepcopy(boolSudoku)
-            for i in range(9):
-                for j in range(9):
-                    if n == sudoku.area[i][j]:
-                        for x in range(9):
-                            boolSudokuTemp[x][j] = False
-                        for y in range(9):
-                            boolSudokuTemp[i][y] = False
-                        #lock the sub-grid
-                        corI = int(i / 3)
-                        corJ = int(j / 3)
-                        for x in range(3):
-                            for y in range(3):
-                                boolSudokuTemp[3*corI + x][3*corJ + y] = False
+            #Optimisation begin here
+            for c in range(len(allCase[n-1])): # all number concern
+                for x in range(9):
+                    boolSudokuTemp[x][allCase[n-1][c].j] = False
+                for y in range(9):
+                    boolSudokuTemp[allCase[n-1][c].i][y] = False
+                #lock the sub-grid
+                corI = int(allCase[n-1][c].i / 3)
+                corJ = int(allCase[n-1][c].j / 3)
+                for x in range(3):
+                    for y in range(3):
+                        boolSudokuTemp[3*corI + x][3*corJ + y] = False
 
+            #Check the free case
             for i in range(3):
                 for j in range(3):
                     nbCaseLib = 0
@@ -65,6 +67,7 @@ def solve_Perso(sudoku):
                     if nbCaseLib == 1:
                         sudoku.area[corI][corJ] = n
                         boolSudoku[corI][corJ] = False
+                        allCase[n-1].append(Case(n,corI,corJ))
                         found = True
 
     print("\nSolution Done !\n")
