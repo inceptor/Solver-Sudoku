@@ -16,3 +16,6 @@ class Sudoku:
                     print('', end='\t')
                 print('')
             print('')
+
+    def get(self):
+        return self.area
