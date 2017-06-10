@@ -30,33 +30,34 @@ def solve_Perso(sudoku):
         for j in range(9):
             if sudoku.area[i][j] != 0:
                 boolSudoku[i][j] = False
-                allCase[sudoku.area[i][j]-1].append(Case(sudoku.area[i][j],i,j))
+                allCase[sudoku.area[i][j]-1].append(Case(sudoku.area[i][j],i,j)) #All well-know number in the sudoku
 
     #the begin
     found = True
     while found:
         found = False
-        for n in range(1,10):
+        for n in range(1,10): #Lock invalid case
             boolSudokuTemp = copy.deepcopy(boolSudoku)
             #Optimisation begin here
-            for c in range(len(allCase[n-1])): # all number concern
-                for x in range(9):
-                    boolSudokuTemp[x][allCase[n-1][c].j] = False
-                for y in range(9):
-                    boolSudokuTemp[allCase[n-1][c].i][y] = False
-                #lock the sub-grid
-                corI = int(allCase[n-1][c].i / 3)
-                corJ = int(allCase[n-1][c].j / 3)
+            for c in range(len(allCase[n-1])): #Pick a number from the list of selected number
+                currentCase = allCase[n-1][c]
+                for x in range(9): #Lock line of the picked number
+                    boolSudokuTemp[x][currentCase.j] = False
+                for y in range(9): #Lock columns of the picked number
+                    boolSudokuTemp[currentCase.i][y] = False
+                #take the coord of the picked number in the square
+                corI = int(currentCase.i / 3)
+                corJ = int(currentCase.j / 3)
                 for x in range(3):
                     for y in range(3):
-                        boolSudokuTemp[3*corI + x][3*corJ + y] = False
+                        boolSudokuTemp[3*corI + x][3*corJ + y] = False #lock the sub-grid of the picked number
 
-            #Check the free case
+            #Check the free case for each square
             for i in range(3):
                 for j in range(3):
                     nbCaseLib = 0
 
-                    for x in range(3):
+                    for x in range(3): #Check if an number can be put in a square
                         for y in range(3):
                             if boolSudokuTemp[3*i + x][3*j + y] == True:
                                 nbCaseLib += 1
@@ -69,6 +70,34 @@ def solve_Perso(sudoku):
                         boolSudoku[corI][corJ] = False
                         allCase[n-1].append(Case(n,corI,corJ))
                         found = True
+
+            for i in range(9): #Check if an number can be put in a line
+                nbCaseLib = 0
+                for j in range(9):
+                    if boolSudokuTemp[i][j] == True:
+                        nbCaseLib += 1
+                        corI = i
+                        corJ = j
+
+                if nbCaseLib == 1:
+                    sudoku.area[corI][corJ] = n
+                    boolSudoku[corI][corJ] = False
+                    allCase[n-1].append(Case(n,corI,corJ))
+                    found = True
+
+            for j in range(9): #Check if an number can be put in a columns
+                nbCaseLib = 0
+                for i in range(9):
+                    if boolSudokuTemp[i][j] == True:
+                        nbCaseLib += 1
+                        corI = i
+                        corJ = j
+
+                if nbCaseLib == 1:
+                    sudoku.area[corI][corJ] = n
+                    boolSudoku[corI][corJ] = False
+                    allCase[n-1].append(Case(n,corI,corJ))
+                    found = True
 
     print("\nSolution Done !\n")
 
