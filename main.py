@@ -8,7 +8,7 @@ test = Sudoku([[6,8,5,2,1,0,4,7,0],[4,1,0,3,0,8,2,9,0],[0,2,3,5,0,0,0,0,6],[0,4,
 test.print() #Print the actual state of the sudoku
 
 #Solve and print the solution
-test = solve_Perso(test2)
+test = solve_Perso(test)
 if test.checkValidity() == 1 :
     print("There is an error in the sudoku.")
 test.print()
