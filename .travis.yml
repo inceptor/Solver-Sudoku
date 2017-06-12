@@ -12,6 +12,7 @@ install:
 script:
     - py.test
     - python main.py
+    - py.test --cov-report html --cov-fail-under 80 --cov .
 
 after_success:
     - codecov
