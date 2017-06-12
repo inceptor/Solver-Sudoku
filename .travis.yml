@@ -12,3 +12,6 @@ install:
 script:
     - py.test
     - python main.py
+
+after_success:
+    - codecov
